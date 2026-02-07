@@ -1,0 +1,151 @@
+====================================================================
+TASK 1: ANALYSIS PLAN FOR BRENT OIL PRICE ANALYSIS
+Generated: 2026-02-07
+====================================================================
+
+1. DATA ANALYSIS WORKFLOW
+-------------------------
+
+1.1 Data Collection & Preparation (Weeks 1-2)
+    Sources:
+    - Brent crude prices: EIA API (2000-present, daily)
+    - Event data: Manual compilation (15 key events)
+    - Macro indicators: FRED, World Bank
+
+    Processing:
+    1. Price cleaning (handle holidays, outliers)
+    2. Returns calculation (log returns for normality)
+    3. Event-date alignment with trading calendar
+    4. Feature engineering (rolling stats, volatility)
+
+1.2 Exploratory Analysis (Week 3)
+    Diagnostics:
+    - Stationarity: ADF, KPSS tests
+    - Volatility: ARCH-LM test, rolling volatility
+    - Distribution: Skewness, kurtosis, normality tests
+
+    Visualizations:
+    - Price timeline with event markers
+    - Returns distribution vs normal
+    - Autocorrelation plots (ACF, PACF)
+
+1.3 Change Point Detection (Weeks 4-5)
+    Methods:
+    1. Bayesian Change Point (probabilistic)
+    2. PELT algorithm (optimal segmentation)
+    3. CUSUM method (real-time detection)
+
+    Validation:
+    - Compare with known historical events
+    - Bootstrap confidence intervals
+    - Sensitivity analysis
+
+1.4 Event Impact Analysis (Weeks 6-7)
+    Methodology:
+    - Event windows: [-10, +10] trading days
+    - Abnormal returns: Market model adjusted
+    - Statistical tests: t-test, sign test, Wilcoxon
+
+    Categorization:
+    - By event type (supply, demand, geopolitical)
+    - By impact magnitude (low, medium, high)
+    - By duration (short, medium, long-term)
+
+1.5 Insight Generation (Week 8)
+    Outputs:
+    1. Structural break timeline
+    2. Event impact ranking
+    3. Volatility regime classification
+    4. Risk assessment dashboard
+
+2. ASSUMPTIONS AND LIMITATIONS
+------------------------------
+
+2.1 Key Assumptions
+    Statistical:
+    - Market efficiency (semi-strong form)
+    - Returns stationarity (tested empirically)
+    - Event exogeneity (debatable - noted)
+
+    Modeling:
+    - Linear additive effects (checked with interactions)
+    - Parameter stability within regimes
+    - Normally distributed errors (after transformations)
+
+2.2 Critical Limitations
+    CORRELATION VS. CAUSATION:
+    This is the most important limitation. We explicitly acknowledge that:
+    - Statistical association does not prove causation
+    - Events may coincide with price changes without causing them
+    - Confounding variables may drive both events and prices
+
+    Specific limitations:
+    1. Confounding factors (multiple simultaneous events)
+    2. Market anticipation effects (pre-event price movements)
+    3. Data frequency (daily misses intraday dynamics)
+    4. Model specification risk (algorithm choice affects results)
+    5. Multiple testing (false discovery rate with many events)
+
+3. COMMUNICATION CHANNELS
+-------------------------
+
+Stakeholder Matrix:
+
+| Stakeholder        | Primary Channel      | Format                    | Frequency     |
+|--------------------|----------------------|---------------------------|---------------|
+| Executive Team     | Monthly Briefing     | PDF + Executive Summary   | Monthly       |
+| Trading Desk       | Real-time Dashboard  | Web Application           | Daily         |
+| Risk Management    | Alert System         | Email/SMS + Dashboard     | Event-driven  |
+| Research Team      | Technical Paper      | Jupyter Notebook          | Quarterly     |
+| External Clients   | Market Commentary    | 2-page Brief              | Bi-weekly     |
+| Media              | Press Release        | Standard Template         | Major Events  |
+
+4. UNDERSTANDING MODEL & DATA
+-----------------------------
+
+4.1 Time Series Properties
+
+Expected Characteristics:
+- Trend: Long-term upward with cyclical components
+- Stationarity: Non-stationary in levels, stationary in returns
+- Volatility: Clustering (high volatility follows high volatility)
+- Seasonality: Moderate (demand patterns)
+
+Analysis Approach:
+1. Trend Analysis: Hodrick-Prescott filter decomposition
+2. Stationarity Testing: ADF (unit root), KPSS (stationarity)
+3. Volatility Patterns: GARCH model diagnostics
+4. Structural Breaks: Multiple change point algorithms
+
+4.2 Change Point Models
+
+Purpose:
+- Identify structural breaks in data-generating process
+- Separate different market regimes
+- Validate against known historical events
+
+Expected Outputs:
+- Break dates with confidence intervals
+- Regime parameters (mean, volatility)
+- Probabilistic assessment
+
+Limitations to Disclose:
+- Model dependence (results vary by algorithm)
+- Multiple testing issues
+- Distinguishing temporary vs permanent breaks
+
+5. EXPECTED OUTPUTS
+-------------------
+
+From Change Point Analysis:
+- Dates of significant structural changes
+- Parameter estimates for each regime
+- Statistical confidence measures
+
+From Event Impact Analysis:
+- Abnormal returns around each event
+- Cumulative impact measures
+- Statistical significance tests
+====================================================================
+NEXT STEPS: Begin Task 2 - Data Pipeline Implementation
+====================================================================
