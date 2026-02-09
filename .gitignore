@@ -2,3 +2,5 @@ data
 .venv
 __pycache__/
 pyproject.toml
+node_modules/
+dashboard/frontend/node_modules/@mui/icons-material/ExpandMoreRounded.js
