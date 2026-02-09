@@ -1,0 +1,191 @@
+project:
+  name: Brent Oil Price Change Point Analysis and Dashboard
+  description: >
+    End-to-end analysis of Brent oil prices including exploratory data analysis,
+    Bayesian change point detection, and an interactive dashboard for stakeholder
+    insight generation.
+  author: Eyayaw Zewdu Ejigu
+  institution: Arba Minch University
+
+pipeline:
+  tasks:
+    - task_1
+    - task_2
+    - task_3
+
+# =========================
+# Task 1: EDA & Event Setup
+# =========================
+task_1:
+  name: Exploratory Data Analysis and Event Foundation
+  objective: >
+    Explore historical Brent oil prices, identify trends and volatility,
+    and prepare event data for change point analysis.
+
+  data:
+    source:
+      file: data/raw/brent_oil_prices.csv
+      date_column: Date
+      price_column: Price
+    preprocessing:
+      datetime_format: auto
+      sort:
+        by: Date
+        order: ascending
+      missing_values:
+        strategy: drop
+
+  eda:
+    plots:
+      - type: time_series
+        title: Brent Oil Prices Over Time
+      - type: rolling_statistics
+        window: 30
+        metrics: [mean, std]
+      - type: returns
+        method: log
+    analysis:
+      volatility_clustering: true
+      outlier_detection: true
+
+  events:
+    enabled: true
+    file: data/events/events.csv
+    fields:
+      - event_date
+      - event_name
+      - event_type
+      - description
+    categories:
+      - geopolitical
+      - economic
+      - policy
+      - conflict
+
+  outputs:
+    cleaned_data: data/processed/cleaned_oil_prices.csv
+    eda_report: reports/task1/eda_summary.md
+    figures: reports/task1/figures/
+
+# =========================
+# Task 2: Change Point Model
+# =========================
+task_2:
+  name: Change Point Modeling and Insight Generation
+  objective: >
+    Detect and quantify structural breaks in Brent oil prices using
+    Bayesian change point modeling.
+
+  data:
+    input:
+      file: data/processed/cleaned_oil_prices.csv
+      date_column: Date
+      price_column: Price
+    transformation:
+      log_returns:
+        enabled: true
+
+  model:
+    framework: pymc
+    type: bayesian_change_point
+    switch_point:
+      prior: discrete_uniform
+      bounds: [0, N]
+    parameters:
+      means:
+        before: mu_1
+        after: mu_2
+      likelihood:
+        distribution: normal
+        sigma_prior: half_normal
+
+  sampling:
+    method: mcmc
+    draws: 2000
+    tune: 1000
+    chains: 4
+    target_accept: 0.9
+    random_seed: 42
+
+  diagnostics:
+    convergence:
+      r_hat_threshold: 1.01
+    plots:
+      - trace
+      - posterior_switch_point
+      - posterior_means
+
+  interpretation:
+    detect_change_points: true
+    quantify_impact:
+      metrics:
+        - mean_shift
+        - percentage_change
+    event_association:
+      enabled: true
+      source: data/events/events.csv
+
+  outputs:
+    model_summary: reports/task2/model_summary.txt
+    figures: reports/task2/figures/
+    change_points: data/processed/change_points.csv
+
+# =========================
+# Task 3: Interactive Dashboard
+# =========================
+task_3:
+  name: Interactive Dashboard Development
+  objective: >
+    Develop an interactive dashboard to visualize Brent oil price trends,
+    change points, and event-driven impacts.
+
+  backend:
+    framework: flask
+    host: 0.0.0.0
+    port: 5000
+    api_prefix: /api
+    endpoints:
+      prices:
+        route: /prices
+        description: Historical Brent oil prices
+      change_points:
+        route: /changepoints
+        description: Bayesian change point results
+      events:
+        route: /events
+        description: Event and impact correlations
+
+  frontend:
+    framework: react
+    responsive: true
+    visualization:
+      libraries:
+        - recharts
+        - react-chartjs-2
+        - d3
+    features:
+      - date_range_filter
+      - event_highlighting
+      - volatility_metrics
+      - drill_down_analysis
+
+  dashboard:
+    views:
+      overview:
+        components:
+          - DashboardOverview
+          - PriceChart
+      change_point_analysis:
+        components:
+          - ChangePointAnalysis
+          - EventImpactAnalyzer
+
+  deployment:
+    environment: development
+    commands:
+      backend: python backend/app.py
+      frontend: npm start
+
+  outputs:
+    build: frontend/build/
+    logs: logs/dashboard.log
